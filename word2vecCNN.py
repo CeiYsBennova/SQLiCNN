@@ -97,7 +97,7 @@ model.add(MaxPooling1D(2))
 model.add(Conv1D(64, 5, activation='relu'))
 model.add(MaxPooling1D(2))
 model.add(Flatten())
-model.add(Dense(1, activation='softmax'))
+model.add(Dense(1, activation='sigmoid'))
 
 # compile model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
