@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 
 from sklearn.model_selection import train_test_split
+#import metrics
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
@@ -13,10 +15,11 @@ from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D,
 
 # read data
 df = pd.read_csv('SQLi.csv')
+#df = pd.read_csv('../WafaMole_dataset/wafamole_dataset.csv')
 
 # split data
 data = df.values
-train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
+train_data, test_data = train_test_split(data, test_size=0.4, random_state=42)
 
 # get sentences and labels
 train_sentences = train_data[:, 0]
@@ -41,10 +44,12 @@ word2vec_model.train(train_sentences, total_examples=word2vec_model.corpus_count
 
 
 #save model
-word2vec_model.save('word2vec.model')
+#word2vec_model.save('word2vec.model')
+#word2vec_model.save('word2vec1.model')
 
 # load pretrained model
-word2vec_model = Word2Vec.load('word2vec.model')
+#word2vec_model = Word2Vec.load('word2vec.model')
+#word2vec_model = Word2Vec.load('word2vec1.model')
 
 #  prepare embedding matrix
 vocab_size = 10000
@@ -92,7 +97,7 @@ model.add(MaxPooling1D(2))
 model.add(Conv1D(64, 5, activation='relu'))
 model.add(MaxPooling1D(2))
 model.add(Flatten())
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dense(1, activation='softmax'))
 
 # compile model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -106,12 +111,14 @@ print('Test accuracy:', test_acc)
 print('Test loss:', test_loss)
 
 # save model
-model.save('word2vecCNN.h5')
+#model.save('word2vecCNN.h5')
+#model.save('word2vecCNN1.h5')
 
 # save tokenizer
 import pickle
-with open('tokenizer.pkl', 'wb') as f:
-    pickle.dump(tokenizer, f, pickle.HIGHEST_PROTOCOL)
+#with open('tokenizer.pkl', 'wb') as f:
+#with open('tokenizer1.pkl', 'wb') as f:
+ #   pickle.dump(tokenizer, f, pickle.HIGHEST_PROTOCOL)
 
 #predict the model
 def predict(sentence):
@@ -133,4 +140,19 @@ predict('UnIOn sElecT 1,2,3,id(),--+-')
 
 # check weights and accuracy
 print(model.evaluate(test_padded, test_labels))
+
+# apply metrics on test data
+y_pred = model.predict(test_padded)
+
+# print accuracy
+print("Accuracy score: ",accuracy_score(test_labels, y_pred.round()))
+
+# print precision
+print("Precision score: ",precision_score(test_labels, y_pred.round()))
+
+# print recall
+print("Recall score: ",recall_score(test_labels, y_pred.round()))
+
+# print f1-score
+print("F1-score: ",f1_score(test_labels, y_pred.round()))
 
