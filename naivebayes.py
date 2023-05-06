@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -40,6 +40,7 @@ print('accuracy: ', accuracy_score(test_labels, predictions))
 print('precision: ', precision_score(test_labels, predictions))
 print('recall: ', recall_score(test_labels, predictions))
 print('f1: ', f1_score(test_labels, predictions))
+print('confusion matrix: \n', confusion_matrix(test_labels, predictions))
 
 # save model
 import pickle

@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 from sklearn.model_selection import train_test_split
-#import metrics
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
@@ -11,7 +11,8 @@ from gensim.models.word2vec import Word2Vec
 from gensim.models.phrases import Phrases, Phraser
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D, Embedding, Conv1D, MaxPooling1D
+from tensorflow.keras.layers import Dense,  Flatten, Embedding, Conv1D, MaxPooling1D
+
 
 # read data
 df = pd.read_csv('SQLi.csv')
@@ -130,6 +131,7 @@ def predict(sentence):
         print('Normal')
 
 # predict the model
+'''
 predict('SELECT Employees.LastName, COUNT ( Orders.OrderID )  AS NumberOfOrders FROM  ( Orders INNER JOIN Employees ON Orders.EmployeeID  =  Employees.EmployeeID )  GROUP BY LastName HAVING COUNT ( Orders.OrderID )  > 10;')
 predict('SELECT * FROM users WHERE username = "admin" AND password = "password" OR 1=1')
 predict('Hello World!')
@@ -137,22 +139,27 @@ predict('union select version(),user(),3,4,--+-')
 predict('from users where id  =  1<@<@ union select 1,version()-- 1')
 predict('SELECT min (failed) FROM nation SELECT SUM(economy)')
 predict('UnIOn sElecT 1,2,3,id(),--+-')
-
+'''
 # check weights and accuracy
 print(model.evaluate(test_padded, test_labels))
 
 # apply metrics on test data
 y_pred = model.predict(test_padded)
+y_pred = np.where(y_pred > 0.5, 1, 0)
 
-# print accuracy
-print("Accuracy score: ",accuracy_score(test_labels, y_pred.round()))
+# accuracy
+print("Accuracy: ",accuracy_score(test_labels, y_pred))
 
-# print precision
-print("Precision score: ",precision_score(test_labels, y_pred.round()))
+# precision
+print("Precision: ",precision_score(test_labels, y_pred))
 
-# print recall
-print("Recall score: ",recall_score(test_labels, y_pred.round()))
+# recall
+print("Recall: ",recall_score(test_labels, y_pred))
 
-# print f1-score
-print("F1-score: ",f1_score(test_labels, y_pred.round()))
+# f1 score
+print("F1 score: ",f1_score(test_labels, y_pred))
+
+# confusion matrix
+print("Confusion matrix: \n",confusion_matrix(test_labels, y_pred))
+
 
